@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="icon" href="">
+    <style>
+        *{
+            margin: 0;
+            padding:0;
+            box-sizing: border-box;
+            font-weight: 500;
+        }
+        .form{
+            border: 2px solid rgba(0, 0, 0, 0);
+            border-radius: 1rem;
+            width: auto;
+            height: auto;
+            padding: 2rem;
+            margin: 2rem;
+            background-color: rgba(211, 211, 211, 0.466);
+        }
+        .title{
+            padding: 0.5rem;
+            background-color: rgba(211, 211, 211, 0.466);
+        }
+        .btn:hover{
+            background-color: rgba(255, 255, 255, 0);
+            color: black;
+            font-weight: 700;
+        }
+        .show{
+            display:none;
+        }
+        .approval{
+            border: 1px solid lightgrey;
+            height:auto;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="title text-center">
+            <h1>JS Project</h1>
+    </header>
+    <form class="form">
+        <h3>LIST TO:</h3>
+        <div class="form-group">
+            <label for="name">Todo's:</label>
+            <input type="text" class="form-control name"></div>
+        <div class="form-group">
+            <label for="email">Description:</label>
+            <textarea type="text" class="form-control email"></textarea></div>
+        <div class="form-group"><button type="submit" class="form-control btn btn-dark">Submit</button></div>
+    </form>
+    <div class="container show">
+        <h4>Approval:</h4>
+        <div class="container approval"></div>
+    </div>
+    <div class="container">
+        <h4>Details:</h4>
+        <ul class="list-group list-group-flush"></ul>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js"></script>
+<script>
+    let obj={};
+    let show=document.querySelector('.show')
+    let name=document.querySelector(".name");
+    let email=document.querySelector(".email");
+    let submit=document.querySelector("button");
+    let ul=document.querySelector("ul");
+    let approval=document.querySelector('.approval')
+    console.log(approval)
+    let m;
+    let n;
+    window.addEventListener("DOMContentLoaded",init)
+    function init(){
+        axios.get("https://crudcrud.com/api/8dec159cc89644018622a3ede96009d1/app")
+        .then(res=>{   
+            res.data.forEach(i=>showdata(i))
+        }).catch(err=>console.log(err))   
+    } 
+    function showdata(res){
+        let li=document.createElement('li');
+        li.className='list-group-item';
+        li.append(document.createTextNode(`${res.task}  ${res.description}`))
+        ul.append(li)
+      }  
+    submit.addEventListener("click",(e)=>{
+        e.preventDefault()
+        if(name.value===""||email.value===""){
+        alert("Please enter the values")
+        }
+        else{
+        obj.task=name.value;
+        obj.description=email.value;
+        n=name.value;
+        m=email.value;
+        show.style.display='block'
+        approval.innerHTML=
+        `<pre>${n} ${m}                 <span><button type="submit" class="btn btn-danger btn-sm">✖</button>    <button type="submit" class="btn btn-success btn-sm">☑️</button></span> </pre>`
+        name.value='';
+        email.value='';
+        let delbtn=document.querySelector('.btn-danger');
+        let tickbtn=document.querySelector('.btn-success');
+        tickbtn.addEventListener('click',postdetails);
+        delbtn.addEventListener("click",removedetails);
+        }
+    });
+    function postdetails(e){
+            axios.post('https://crudcrud.com/api/8dec159cc89644018622a3ede96009d1/app',obj)
+            .then(res=>showdata(res.data))
+            .catch(err=>console.log(err))
+            show.style.display='none' ; 
+        }
+    function removedetails(e){
+            name.value=n;
+            email.value=m;
+            show.style.display='none';
+       }     
+</script>
+</body>
+</html>
